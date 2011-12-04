@@ -12,6 +12,7 @@ info.
 #pragma once
 
 #include "reader.h"
+#include <stdexcept>
 
 namespace json
 {
@@ -25,7 +26,7 @@ public:
 
 
 
-class ScanException : public json::Exception
+class ScanException : public Exception
 {
 public:
    ScanException(const std::string& sMessage, const Reader::Location& locError) :

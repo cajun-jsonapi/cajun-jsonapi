@@ -37,6 +37,8 @@ public:
 
    virtual void Accept(const Element& element, ConstVisitor& visitor) const = 0;
    virtual void Accept(Element& element, Visitor& visitor) = 0;
+
+   virtual bool operator == (const ElementImp& elementImp) const = 0;
 };
 
 
@@ -46,7 +48,7 @@ Element::Element() :
 }
 
 Element::Element(const Element& element) :
-   m_pElementImp(element.ImpBase().Clone())
+   m_pElementImp(element.m_pElementImp->Clone())
 {}
 
 Element::~Element() {
@@ -55,12 +57,12 @@ Element::~Element() {
 
 Element& Element::operator= (const Element& element) {
    delete m_pElementImp;
-   m_pElementImp = element.ImpBase().Clone();
+   m_pElementImp = element.m_pElementImp->Clone();
    return *this; 
 }
 
 ElementType Element::Type() const {
-   return ImpBase().Type(); 
+   return m_pElementImp->Type(); 
 }
 
 Element::Element(ElementImp* elementImp) : 
@@ -68,21 +70,15 @@ Element::Element(ElementImp* elementImp) :
 {}
 
 void Element::Accept(ConstVisitor& visitor) const {
-   ImpBase().Accept(*this, visitor);
+   m_pElementImp->Accept(*this, visitor);
 }
 
 void Element::Accept(Visitor& visitor) {
-   ImpBase().Accept(*this, visitor);
+   m_pElementImp->Accept(*this, visitor);
 }
 
-ElementImp& Element::ImpBase() { 
-   assert(m_pElementImp);
-   return *m_pElementImp; 
-}
-
-const ElementImp& Element::ImpBase() const {
-   assert(m_pElementImp);
-   return *m_pElementImp;
+bool Element::operator == (const Element& element) const {
+   return *m_pElementImp == *element.m_pElementImp;
 }
 
 
@@ -120,6 +116,18 @@ public:
    }
 
    virtual ElementType Type() const { return TYPE; }
+
+   virtual bool operator == (const ElementImp& elementImp) const {
+      bool bEquals = false;
+      if (Type() == elementImp.Type()) {
+         const RealImpTypeT& impThis = static_cast<const RealImpTypeT&>(*this);
+         const RealImpTypeT& impRhs = static_cast<const RealImpTypeT&>(elementImp);
+
+         bEquals = (impThis == impRhs);
+      }
+
+      return bEquals;
+   }
 };
 
 
@@ -132,6 +140,24 @@ Element_T<ElementImpTypeT>::Element_T() :
 template <typename ElementImpTypeT>
 ElementType Element_T<ElementImpTypeT>::Type_i() {
    return ElementImpTypeT::Type_i();
+}
+
+template <typename ElementImpTypeT>
+void Element_T<ElementImpTypeT>::SanityCheck() const {
+  if (Type_i() != Type())
+     throw Exception("Type/ImpType mismatch");
+}
+
+template <typename ElementImpTypeT>
+ElementImpTypeT& Element_T<ElementImpTypeT>::Imp() {
+   SanityCheck();
+   return static_cast<ElementImpTypeT&>(*m_pElementImp); 
+}
+
+template <typename ElementImpTypeT>
+const ElementImpTypeT& Element_T<ElementImpTypeT>::Imp() const {
+   SanityCheck();
+   return static_cast<const ElementImpTypeT&>(*m_pElementImp); 
 }
 
 
@@ -164,16 +190,21 @@ public:
    Element& operator[] (size_t index) {
       if (index >= m_Elements.size())
          throw Exception("Array out of bounds");
-      Array::iterator it = m_Elements.begin();
-      std::advance(it, index);
-      return *it; 
+      return m_Elements[index]; 
    }
+
    const Element& operator[] (size_t index) const {
       if (index >= m_Elements.size())
          throw Exception("Array out of bounds");
-      Array::const_iterator it = m_Elements.begin();
-      std::advance(it, index);
-      return *it; 
+      return m_Elements[index]; 
+   }
+
+   void Clear() {
+      m_Elements.clear();
+   }
+
+   bool operator == (const ArrayImp& arrayImp) const {
+      return m_Elements == arrayImp.m_Elements;
    }
 
 private:
@@ -231,6 +262,10 @@ const Element& Array::operator [] (size_t index) const {
    return Imp()[index]; 
 }
 
+void Array::Clear() {
+   Imp().Clear();
+}
+
 
 //////////////////
 // Object members
@@ -279,11 +314,15 @@ public:
    const Element& operator [](const std::string& name) const {
       Object::Members::const_iterator it = std::find_if(m_Members.begin(), m_Members.end(), Finder(name));
       if (it == m_Members.end())
-         throw Exception("Object name not found: " + name);
+         throw Exception("Object member not found: " + name);
       return it->element;
    }
 
    void Clear() { m_Members.clear(); }
+
+   bool operator == (const ObjectImp& objectImp) const {
+      return m_Members == objectImp.m_Members;
+   }
 
 private:
    class Finder : public std::unary_function<Object::Member, bool>
@@ -300,6 +339,15 @@ private:
 
    Object::Members m_Members;
 };
+
+
+Object::Member::Member(const std::string& nameIn, const Element& elementIn) :
+   name(nameIn), element(elementIn) {}
+
+bool Object::Member::operator == (const Member& member) const {
+   return name == member.name &&
+          element == member.element;
+}
 
 
 Object::Object() {}
@@ -361,7 +409,12 @@ void Object::Clear() {
 
 
 class NullImp : public ElementImp_T<Null, NullImp, NULL_ELEMENT>
-{};
+{
+public:
+   bool operator == (const NullImp&) const {
+      return true;
+   }
+};
 
 
 
@@ -372,13 +425,12 @@ template <typename DataTypeT, ElementType TYPE>
 class TrivialImpType_T : public ElementImp_T<TrivialType_T<DataTypeT, TYPE>, TrivialImpType_T<DataTypeT, TYPE>, TYPE>
 {
 public:
-   TrivialImpType_T& operator = (const DataTypeT& t) { 
-      m_tValue = t; 
-      return *this;
-   }
-
    operator DataTypeT&() { return m_tValue; }
    operator const DataTypeT&() const { return m_tValue; }
+
+   bool operator == (const TrivialImpType_T& trivialImp) const {
+      return m_tValue == trivialImp.m_tValue;
+   }
 
 private:
    DataTypeT m_tValue;
@@ -388,24 +440,18 @@ private:
 template <typename DataTypeT, ElementType TYPE>
 TrivialType_T<DataTypeT, TYPE>::TrivialType_T(const DataTypeT& t)
 {
-   //Imp().SetValue(t);
-   Imp().operator=(t);
+   operator DataTypeT&() = t;
 }
 
-template <typename DataTypeT, ElementType TYPE>
-TrivialType_T<DataTypeT, TYPE>& TrivialType_T<DataTypeT, TYPE>::operator = (const DataTypeT& t) {
-   Imp().operator=(t);
-   return *this;
-}
 
 template <typename DataTypeT, ElementType TYPE>
 TrivialType_T<DataTypeT, TYPE>::operator const DataTypeT&() const {
-   return Imp().operator const DataTypeT&();
+   return ThisType::Imp().operator const DataTypeT&();
 }
 
 template <typename DataTypeT, ElementType TYPE>
 TrivialType_T<DataTypeT, TYPE>::operator DataTypeT&() {
-   return Imp().operator DataTypeT&();
+   return ThisType::Imp().operator DataTypeT&();
 }
 
 // explicit template instantiations

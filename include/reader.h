@@ -30,18 +30,38 @@ public:
    static void Read(Element& elementRoot, std::istream& istr);
 
 private:
-   class InputStream;
+   struct Token
+   {
+      enum Type
+      {
+         TOKEN_OBJECT_BEGIN,  //    {
+         TOKEN_OBJECT_END,    //    }
+         TOKEN_ARRAY_BEGIN,   //    [
+         TOKEN_ARRAY_END,     //    ]
+         TOKEN_NEXT_ELEMENT,  //    ,
+         TOKEN_MEMBER_ASSIGN, //    :
+         TOKEN_STRING,        //    "xxx"
+         TOKEN_NUMBER,        //    [+/-]000.000[e[+/-]000]
+         TOKEN_BOOLEAN,       //    true -or- false
+         TOKEN_NULL           //    null
+      };
 
-   enum TokenType;
-   struct Token;
-   typedef std::vector<Token> Tokens;
+      Type nType;
+      std::string sValue;
+
+      // for malformed file debugging
+      Reader::Location locBegin;
+      Reader::Location locEnd;
+   };
+
+   class InputStream;
    class TokenStream;
+   typedef std::vector<Token> Tokens;
 
    // scanning istream into token sequence
    void Scan(Tokens& tokens, InputStream& inputStream);
 
    void EatWhiteSpace(InputStream& inputStream);
-   void MatchComment(std::string& sComment, InputStream& inputStream);
    void MatchString(std::string& sValue, InputStream& inputStream);
    void MatchNumber(std::string& sNumber, InputStream& inputStream);
    void MatchExpectedString(const std::string& sExpected, InputStream& inputStream);
@@ -55,7 +75,7 @@ private:
    void Parse(Boolean& boolean, TokenStream& tokenStream);
    void Parse(Null& null, TokenStream& tokenStream);
 
-   const std::string& MatchExpectedToken(TokenType nExpected, TokenStream& tokenStream);
+   const std::string& MatchExpectedToken(Token::Type nExpected, TokenStream& tokenStream);
 };
 
 

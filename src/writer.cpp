@@ -78,7 +78,8 @@ void Writer::Visit(const Object& object) {
    }
 }
 
-void Writer::Visit(const Number& number) {
+void Writer::Visit(const Number& numberElement) {
+   double number = numberElement;
    m_ostr << number;
 }
 
@@ -86,7 +87,7 @@ void Writer::Visit(const Boolean& booleanElement) {
    m_ostr << (booleanElement ? "true" : "false");
 }
 
-void Writer::Visit(const Null& nullElement) {
+void Writer::Visit(const Null& ) {
    m_ostr << "null";
 }
 

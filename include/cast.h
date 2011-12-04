@@ -28,27 +28,28 @@ json_cast<const Number*>(el); // compile time failure (cannot convert ref to poi
 #pragma once
 
 
+#include "Elements.h"
+
+
 namespace json
 {
 
 
-class Element;
-
 // reference to non-const
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(Element& element);
+template <typename ElementRefT>
+ElementRefT json_cast(Element& element);
 
 // reference to const
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(const Element& element);
+template <typename ConstElementRefT>
+ConstElementRefT json_cast(const Element& element);
 
 // pointer to non-const
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(Element* pElement);
+template <typename ElementPtrT>
+ElementPtrT json_cast(Element* pElement);
 
 // pointer to const
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(const Element* pElement);
+template <typename ConstElementPtrT>
+ConstElementPtrT json_cast(const Element* pElement);
 
 } // End namespace
 

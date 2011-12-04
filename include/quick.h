@@ -37,7 +37,6 @@ builder["XYZ"][ABC][0] = Number(1);
 
 #include "elements.h"
 
-
 namespace json
 {
 
@@ -45,23 +44,18 @@ namespace json
 class QuickInterpreter
 {
 public:
-   QuickInterpreter(const Element& element) :
-      m_Element(element) {}
+   QuickInterpreter(const Element& element);
 
-   QuickInterpreter operator[] (const std::string& key) const {
-      const Object& obj = As<Object>();
-      return obj[key];
-   }
+      // object member access
+   QuickInterpreter operator[] (const std::string& key) const;
 
-   QuickInterpreter operator[] (int index) const {
-      const Array& array = As<Array>();
-      return array[index];
-   }
+   // array element access
+   size_t Size() const;
+   QuickInterpreter operator[] (size_t index) const;
 
-   operator const Element& () const { return m_Element; }
-
+   // implicit (safe) cast to any element
    template <typename ElementTypeT>
-   const ElementTypeT& As() const { return json_cast<const ElementTypeT&>(m_Element); }
+   operator const ElementTypeT& () const;
 
 private:
    const Element& m_Element;
@@ -71,48 +65,31 @@ private:
 class QuickBuilder
 {
 public:
-   QuickBuilder(Element& element) :
-      m_Element(element) {}
+   QuickBuilder(Element& element);
 
-   QuickBuilder operator[] (const std::string& key) {
-      Object& obj = Convert<Object>();
-      return obj[key];
-   }
+   // object element access
+   QuickBuilder operator[] (const std::string& key);
 
-   // how should we handle out of bounds? error? string [] implicitly 
-   //  creates a new key/value. we'll implicitly resize
-   QuickBuilder operator[] (size_t index) {
-      Array& array = Convert<Array>();
-      size_t nMinSize = index + 1; // zero indexed
-      if (array.Size() < nMinSize)
-         array.Resize(nMinSize);
-      return array[index];
-   }
+   // array element access
+   size_t Size();
+   QuickBuilder operator[] (size_t index);
 
-   QuickBuilder& operator = (const Element& element) {
-      m_Element = element;
-      return *this;
-   }
-
-   operator Element& () { return m_Element; }
+   // implicit (safe) cast to any element
+   QuickBuilder& operator = (const Element& element);
 
    template <typename ElementTypeT>
-   ElementTypeT& As() { return json_cast<ElementTypeT&>(m_Element); }
+   operator ElementTypeT& ();
 
    template <typename ElementTypeT>
-   ElementTypeT& Convert() {
-      // we want an ElementTypeT. make it one if it's not.
-      try {
-         return As<ElementTypeT>();
-      }
-      catch (Exception&) {
-         m_Element = ElementTypeT();
-         return As<ElementTypeT>();
-      }
-   }
+   ElementTypeT& Convert();
 
 private:
    Element& m_Element;
 };
 
-}
+
+} // End namespace
+
+
+#include "quick.inl"
+

@@ -8,85 +8,83 @@ TODO: additional documentation.
 
 ***********************************************/
 
+#include "exception.h"
+
 namespace json
 {
 
 
 // just a declaration, specializations below
-template <typename ElementType>
+template <typename ElementT>
 class ElementCastImp;
 
 // reference to non-const
-template <typename ElementTypeT>
-class ElementCastImp<ElementTypeT&>
+template <typename ElementT>
+class ElementCastImp<ElementT&>
 {
 public:
-   typedef ElementTypeT& ReturnType;
-
-   static ReturnType cast_i(Element& element) {
-      if (element.Type() != ElementTypeT::Type_i())
+   static ElementT& cast_i(Element& element) {
+      if (element.Type() != ElementT::Type_i())
          throw Exception("Bad json_cast");
-      return static_cast<ReturnType>(element);
+      return static_cast<ElementT&>(element);
    }
 };
 
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(Element& element) {
-   return ElementCastImp<ElementTypeQualifiedT>::cast_i(element);   
+template <typename ElementRefT>
+ElementRefT json_cast(Element& element) {
+   return ElementCastImp<ElementRefT>::cast_i(element);   
 }
 
 
 // reference to const
-template <typename ElementTypeT>
-class ElementCastImp<const ElementTypeT&>
+template <typename ElementT>
+class ElementCastImp<const ElementT&>
 {
 public:
-   typedef const ElementTypeT& ReturnType;
-
-   static ReturnType cast_i(const Element& element) {
-      if (element.Type() != ElementTypeT::Type_i())
+   static const ElementT& cast_i(const Element& element) {
+      if (element.Type() != ElementT::Type_i())
          throw Exception("Bad json_cast");
-      return static_cast<ReturnType>(element);
+      return static_cast<const ElementT&>(element);
    }
 };
 
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(const Element& element) {
-   return ElementCastImp<ElementTypeQualifiedT>::cast_i(element);   
+template <typename ConstElementRefT>
+ConstElementRefT json_cast(const Element& element) {
+   return ElementCastImp<ConstElementRefT>::cast_i(element);   
 }
 
 
 // pointer to non-const
-template <typename ElementTypeT>
-class ElementCastImp<ElementTypeT*>
+template <typename ElementT>
+class ElementCastImp<ElementT*>
 {
 public:
-   static ElementTypeT* cast_i(Element* pElement) {
-      return (pElement->Type() == ElementTypeT::Type_i() ? static_cast<ElementTypeT*>(pElement) :
+   static ElementT* cast_i(Element* pElement) {
+      return (pElement->Type() == ElementT::Type_i() ? static_cast<ElementT*>(pElement) :
                                                        0);
    }
 };
 
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(Element* pElement) {
-   return ElementCastImp<ElementTypeQualifiedT>::cast_i(pElement);   
+template <typename ElementPtrT>
+ElementPtrT json_cast(Element* pElement) {
+   return ElementCastImp<ElementPtrT>::cast_i(pElement);   
 }
 
 
 // pointer to const
-template <typename ElementTypeT>
-class ElementCastImp<const ElementTypeT*>
+template <typename ElementT>
+class ElementCastImp<const ElementT*>
 {
 public:
-   static ElementTypeT* cast_i(const Element* pElement) {
-      return (pElement->Type() == ElementTypeT::Type_i() ? static_cast<const ElementTypeT*>(pElement) :
+   static ElementT* cast_i(const Element* pElement) {
+      return (pElement->Type() == ElementT::Type_i() ? static_cast<const ElementT*>(pElement) :
                                                        0);
    }
 };
 
-template <typename ElementTypeQualifiedT>
-ElementTypeQualifiedT json_cast(const Element* pElement) {
-   return ElementCastImp<ElementTypeQualifiedT>::cast_i(pElement);   
+template <typename ConstElementTypePtrT>
+ConstElementTypePtrT json_cast(const Element* pElement) {
+   return ElementCastImp<ConstElementTypePtrT>::cast_i(pElement);   
 }
 
 

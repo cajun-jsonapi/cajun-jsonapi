@@ -26,27 +26,16 @@ TODO:
 namespace json
 {
 
+std::istream& operator >> (std::istream& istr, Element& elementRoot) {
+   Reader::Read(elementRoot, istr);
+   return istr;
+}
 
 Reader::Location::Location() :
    m_nLine(0),
    m_nLineOffset(0),
    m_nDocOffset(0)
 {}
-
-enum Reader::TokenType
-{
-   TOKEN_OBJECT_BEGIN,  //    {
-   TOKEN_OBJECT_END,    //    }
-   TOKEN_ARRAY_BEGIN,   //    [
-   TOKEN_ARRAY_END,     //    ]
-   TOKEN_NEXT_ELEMENT,  //    ,
-   TOKEN_MEMBER_ASSIGN, //    :
-   TOKEN_STRING,        //    "xxx"
-   TOKEN_NUMBER,        //    [+/-]000.000e[+/-]000
-   TOKEN_BOOLEAN,       //    true -or- false
-   TOKEN_NULL,          //    null
-   TOKEN_COMMENT        //    // ......
-};
 
 
 //////////////////////
@@ -59,8 +48,8 @@ public:
       m_iStr(iStr) {}
 
    // protect access to the input stream, so we can keeep track of document/line offsets
-   std::istream::int_type Get(); // big, define outside
-   std::istream::int_type Peek() {
+   char Get(); // big, define outside
+   char Peek() {
       assert(m_iStr.eof() == false); // enforce reading of only valid stream data 
       return m_iStr.peek();
    }
@@ -78,13 +67,13 @@ private:
 };
 
 
-std::istream::int_type Reader::InputStream::Get()
+char Reader::InputStream::Get()
 {
    assert(m_iStr.eof() == false); // enforce reading of only valid stream data 
-   std::istream::int_type nChar = m_iStr.get();
+   char c = m_iStr.get();
    
    ++m_Location.m_nDocOffset;
-   if (nChar == '\n')
+   if (c == '\n')
    {
       ++m_Location.m_nLine;
       m_Location.m_nLineOffset = 0;
@@ -94,24 +83,9 @@ std::istream::int_type Reader::InputStream::Get()
       ++m_Location.m_nLineOffset;
    }
 
-   return nChar;
+   return c;
 }
 
-
-
-////////////////
-// Reader::Token
-
-struct Reader::Token
-{
-   TokenType nType;
-   std::string sValue;
-
-   // for malformed file debugging
-   Reader::Location locBegin;
-   Reader::Location locEnd;
-};
-   
 
 
 //////////////////////
@@ -185,49 +159,44 @@ void Reader::Scan(Tokens& tokens, InputStream& inputStream)
       token.locBegin = inputStream.GetLocation();
 
       // gives us null-terminated string
-      char sChar[2] = {0};
-      sChar[0] = inputStream.Peek();
+      std::string sChar;
+      sChar.push_back(inputStream.Peek());
 
       switch (sChar[0])
       {
          case '{':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_OBJECT_BEGIN;
+            token.nType = Token::TOKEN_OBJECT_BEGIN;
             break;
 
          case '}':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_OBJECT_END;
+            token.nType = Token::TOKEN_OBJECT_END;
             break;
 
          case '[':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_ARRAY_BEGIN;
+            token.nType = Token::TOKEN_ARRAY_BEGIN;
             break;
 
          case ']':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_ARRAY_END;
+            token.nType = Token::TOKEN_ARRAY_END;
             break;
 
          case ',':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_NEXT_ELEMENT;
-            break;
-
-         case '/':
-            MatchComment(token.sValue, inputStream);
-            token.nType = TOKEN_COMMENT;
+            token.nType = Token::TOKEN_NEXT_ELEMENT;
             break;
 
          case ':':
             MatchExpectedString(sChar, inputStream);
-            token.nType = TOKEN_MEMBER_ASSIGN;
+            token.nType = Token::TOKEN_MEMBER_ASSIGN;
             break;
 
          case '"':
             MatchString(token.sValue, inputStream);
-            token.nType = TOKEN_STRING;
+            token.nType = Token::TOKEN_STRING;
             break;
 
          case '-':
@@ -242,30 +211,30 @@ void Reader::Scan(Tokens& tokens, InputStream& inputStream)
          case '8':
          case '9':
             MatchNumber(token.sValue,inputStream);
-            token.nType = TOKEN_NUMBER;
+            token.nType = Token::TOKEN_NUMBER;
             break;
 
          case 't':
             token.sValue = "true";
             MatchExpectedString(token.sValue, inputStream);
-            token.nType = TOKEN_BOOLEAN;
+            token.nType = Token::TOKEN_BOOLEAN;
             break;
 
          case 'f':
             token.sValue = "false";
             MatchExpectedString(token.sValue, inputStream);
-            token.nType = TOKEN_BOOLEAN;
+            token.nType = Token::TOKEN_BOOLEAN;
             break;
 
          case 'n':
             token.sValue = "null";
             MatchExpectedString(token.sValue, inputStream);
-            token.nType = TOKEN_NULL;
+            token.nType = Token::TOKEN_NULL;
             break;
 
          default:
          {
-            std::string sErrorMessage = "Unexpected character in stream: " + sChar[0];
+            std::string sErrorMessage = "Unexpected character in stream: " + sChar;
             throw ScanException(sErrorMessage, inputStream.GetLocation());
          }
       }
@@ -298,18 +267,6 @@ void Reader::MatchExpectedString(const std::string& sExpected, InputStream& inpu
    }
 
    // all's well if we made it here, return quietly
-}
-
-
-void Reader::MatchComment(std::string& sComment, InputStream& inputStream)
-{
-   MatchExpectedString("//", inputStream);
-
-   while (inputStream.EOS() == false &&
-          inputStream.Peek() != '\n')
-   {
-      sComment.push_back(inputStream.Get());
-   }
 }
 
 
@@ -381,38 +338,34 @@ void Reader::Parse(Element& element, Reader::TokenStream& tokenStream)
    const Token& token = tokenStream.Peek();
    switch (token.nType)
    {
-      case TOKEN_OBJECT_BEGIN:
+      case Token::TOKEN_OBJECT_BEGIN:
          element = Object();
          Parse(json_cast<Object&>(element), tokenStream);
          break;
 
-      case TOKEN_ARRAY_BEGIN:
+      case Token::TOKEN_ARRAY_BEGIN:
          element = Array();
          Parse(json_cast<Array&>(element), tokenStream);
          break;
 
-      case TOKEN_STRING:
+      case Token::TOKEN_STRING:
          element = String();
          Parse(json_cast<String&>(element), tokenStream);
          break;
 
-      case TOKEN_NUMBER:
+      case Token::TOKEN_NUMBER:
          element = Number();
          Parse(json_cast<Number&>(element), tokenStream);
          break;
 
-      case TOKEN_BOOLEAN:
+      case Token::TOKEN_BOOLEAN:
          element = Boolean();
          Parse(json_cast<Boolean&>(element), tokenStream);
          break;
 
-      case TOKEN_NULL:
+      case Token::TOKEN_NULL:
          element = Null();
          Parse(json_cast<Null&>(element), tokenStream);
-         break;
-
-      case TOKEN_COMMENT:
-         // do nothing
          break;
 
       default:
@@ -426,20 +379,20 @@ void Reader::Parse(Element& element, Reader::TokenStream& tokenStream)
 
 void Reader::Parse(Object& object, Reader::TokenStream& tokenStream)
 {
-   MatchExpectedToken(TOKEN_OBJECT_BEGIN, tokenStream);
+   MatchExpectedToken(Token::TOKEN_OBJECT_BEGIN, tokenStream);
 
    bool bContinue = (tokenStream.EOS() == false &&
-                     tokenStream.Peek().nType != TOKEN_OBJECT_END);
+                     tokenStream.Peek().nType != Token::TOKEN_OBJECT_END);
    while (bContinue)
    {
       Object::Member member;
 
       // first the member name. save the token in case we have to throw an exception
       const Token& tokenName = tokenStream.Peek();
-      member.name = MatchExpectedToken(TOKEN_STRING, tokenStream);
+      member.name = MatchExpectedToken(Token::TOKEN_STRING, tokenStream);
 
       // ...then the key/value separator...
-      MatchExpectedToken(TOKEN_MEMBER_ASSIGN, tokenStream);
+      MatchExpectedToken(Token::TOKEN_MEMBER_ASSIGN, tokenStream);
 
       // ...then the value itself (can be anything).
       Parse(member.element, tokenStream);
@@ -457,21 +410,21 @@ void Reader::Parse(Object& object, Reader::TokenStream& tokenStream)
       }
 
       bContinue = (tokenStream.EOS() == false &&
-                   tokenStream.Peek().nType == TOKEN_NEXT_ELEMENT);
+                   tokenStream.Peek().nType == Token::TOKEN_NEXT_ELEMENT);
       if (bContinue)
-         MatchExpectedToken(TOKEN_NEXT_ELEMENT, tokenStream);
+         MatchExpectedToken(Token::TOKEN_NEXT_ELEMENT, tokenStream);
    }
 
-   MatchExpectedToken(TOKEN_OBJECT_END, tokenStream);
+   MatchExpectedToken(Token::TOKEN_OBJECT_END, tokenStream);
 }
 
 
 void Reader::Parse(Array& array, Reader::TokenStream& tokenStream)
 {
-   MatchExpectedToken(TOKEN_ARRAY_BEGIN, tokenStream);
+   MatchExpectedToken(Token::TOKEN_ARRAY_BEGIN, tokenStream);
 
    bool bContinue = (tokenStream.EOS() == false &&
-                     tokenStream.Peek().nType != TOKEN_ARRAY_END);
+                     tokenStream.Peek().nType != Token::TOKEN_ARRAY_END);
    while (bContinue)
    {
       // ...what's next? could be anything
@@ -479,25 +432,25 @@ void Reader::Parse(Array& array, Reader::TokenStream& tokenStream)
       Parse(*itElement, tokenStream);
 
       bContinue = (tokenStream.EOS() == false &&
-                   tokenStream.Peek().nType == TOKEN_NEXT_ELEMENT);
+                   tokenStream.Peek().nType == Token::TOKEN_NEXT_ELEMENT);
       if (bContinue)
-         MatchExpectedToken(TOKEN_NEXT_ELEMENT, tokenStream);
+         MatchExpectedToken(Token::TOKEN_NEXT_ELEMENT, tokenStream);
    }
 
-   MatchExpectedToken(TOKEN_ARRAY_END, tokenStream);
+   MatchExpectedToken(Token::TOKEN_ARRAY_END, tokenStream);
 }
 
 
 void Reader::Parse(String& string, Reader::TokenStream& tokenStream)
 {
-   string = MatchExpectedToken(TOKEN_STRING, tokenStream);
+   string = MatchExpectedToken(Token::TOKEN_STRING, tokenStream);
 }
 
 
 void Reader::Parse(Number& number, Reader::TokenStream& tokenStream)
 {
    const Token& currentToken = tokenStream.Peek(); // might need this later for throwing exception
-   const std::string& sValue = MatchExpectedToken(TOKEN_NUMBER, tokenStream);
+   const std::string& sValue = MatchExpectedToken(Token::TOKEN_NUMBER, tokenStream);
 
    std::istringstream iStr(sValue);
    double dValue;
@@ -516,18 +469,18 @@ void Reader::Parse(Number& number, Reader::TokenStream& tokenStream)
 
 void Reader::Parse(Boolean& boolean, Reader::TokenStream& tokenStream)
 {
-   const std::string& sValue = MatchExpectedToken(TOKEN_BOOLEAN, tokenStream);
+   const std::string& sValue = MatchExpectedToken(Token::TOKEN_BOOLEAN, tokenStream);
    boolean = (sValue == "true" ? true : false);
 }
 
 
-void Reader::Parse(Null& null, Reader::TokenStream& tokenStream)
+void Reader::Parse(Null&, Reader::TokenStream& tokenStream)
 {
-   MatchExpectedToken(TOKEN_NULL, tokenStream);
+   MatchExpectedToken(Token::TOKEN_NULL, tokenStream);
 }
 
 
-const std::string& Reader::MatchExpectedToken(TokenType nExpected, Reader::TokenStream& tokenStream)
+const std::string& Reader::MatchExpectedToken(Token::Type nExpected, Reader::TokenStream& tokenStream)
 {
    if (tokenStream.EOS())
    {

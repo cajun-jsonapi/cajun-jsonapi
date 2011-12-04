@@ -19,6 +19,8 @@ namespace json
 class Visitor
 {
 public:
+   virtual ~Visitor() {}
+
    virtual void Visit(Array& array) = 0;
    virtual void Visit(Object& object) = 0;
    virtual void Visit(Number& number) = 0;
@@ -30,6 +32,8 @@ public:
 class ConstVisitor
 {
 public:
+   virtual ~ConstVisitor() {}
+
    virtual void Visit(const Array& array) = 0;
    virtual void Visit(const Object& object) = 0;
    virtual void Visit(const Number& number) = 0;
@@ -39,4 +43,4 @@ public:
 };
 
 
-}
+} // End namespace

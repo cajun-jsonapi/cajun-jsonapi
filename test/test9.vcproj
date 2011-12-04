@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
-	Name="json"
-	ProjectGUID="{18FBC8EF-A800-43E1-A7D8-641996092EC5}"
-	RootNamespace="json"
+	Version="9.00"
+	Name="test"
+	ProjectGUID="{18FBC8EF-A801-43E1-A7D8-641996092EC5}"
+	RootNamespace="test"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -17,9 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug Multithreaded|Win32"
-			OutputDirectory="$(SolutionDir)\lib8"
-			IntermediateDirectory="$(SolutionDir)\obj8\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			OutputDirectory="$(SolutionDir)\bin9"
+			IntermediateDirectory="$(SolutionDir)\obj9\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
@@ -62,11 +63,20 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName)mtD.lib"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)/jsonmtD.exe"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -78,14 +88,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release Multithreaded|Win32"
-			OutputDirectory="$(SolutionDir)\lib8"
-			IntermediateDirectory="$(SolutionDir)\obj8\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			OutputDirectory="$(SolutionDir)\bin9"
+			IntermediateDirectory="$(SolutionDir)\obj9\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -129,11 +142,22 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)mt.lib"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)/jsonmt.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -145,14 +169,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug Multithreaded DLL|Win32"
-			OutputDirectory="$(SolutionDir)\lib8"
-			IntermediateDirectory="$(SolutionDir)\obj8\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			OutputDirectory="$(SolutionDir)\bin9"
+			IntermediateDirectory="$(SolutionDir)\obj9\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
@@ -195,11 +222,20 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName)mtdllD.lib"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)/jsonmtdllD.exe"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -211,14 +247,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release Multithreaded DLL|Win32"
-			OutputDirectory="$(SolutionDir)\lib8"
-			IntermediateDirectory="$(SolutionDir)\obj8\$(ProjectName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			OutputDirectory="$(SolutionDir)\bin9"
+			IntermediateDirectory="$(SolutionDir)\obj9\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -262,11 +301,22 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)mtdll.lib"
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)/jsonmtdll.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -276,6 +326,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -291,27 +344,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\include\cast.inl"
-				>
-			</File>
-			<File
-				RelativePath=".\elements.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\quick.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\include\quick.inl"
-				>
-			</File>
-			<File
-				RelativePath=".\reader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\writer.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 		</Filter>
@@ -320,34 +353,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\include\cast.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\elements.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\exception.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\quick.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\reader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\visitor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\writer.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

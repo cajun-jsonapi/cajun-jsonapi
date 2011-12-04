@@ -19,7 +19,9 @@ info.
 /*  
 
 TODO:
-* better documentation
+* better documentation (doxygen?)
+* Unicode support
+* parent element accessors
 
 */
 
@@ -28,6 +30,7 @@ namespace json
 
 class Visitor;
 class ConstVisitor;
+
 
 enum ElementType
 {
@@ -40,8 +43,9 @@ enum ElementType
 };
 
 
-////////////////////////////////////////////////////////////////////////
-// base class - provides little useful in client code except constructor
+/////////////////////////////////////////////////////////////////////////
+// base class - provides little useful in client code except constructor, 
+//  visitor-related functions & equality operator
 
 class ElementImp;
 class Element
@@ -60,21 +64,19 @@ public:
    void Accept(Visitor& visitor);
    void Accept(ConstVisitor& visitor) const;
 
+   bool operator == (const Element& element) const;
+
 protected:
    Element(ElementImp* elementImp);
 
-   ElementImp& ImpBase();
-   const ElementImp& ImpBase() const;
-
-private:
    ElementImp* m_pElementImp;
 };
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // template base class for all "concrete" element types. employs "curiously 
-// recursive template pattern", also provides little interface used in client 
-// code 
+//  recursive template pattern". also provides little interface used in client 
+//  code 
 
 template <typename ElementImpTypeT>
 class Element_T : public Element
@@ -85,21 +87,23 @@ public:
 protected:
    Element_T();
 
-   //  return type is covariant with ImpBase(), but compiler doesn't know it (can't forward-declare inheritance)
-   ElementImpTypeT& Imp() { return static_cast<ElementImpTypeT&>(ImpBase()); }
-   const ElementImpTypeT& Imp() const { return static_cast<const ElementImpTypeT&>(ImpBase()); }
+   void SanityCheck() const;
+
+   ElementImpTypeT& Imp();
+   const ElementImpTypeT& Imp() const;
 };
 
 
 /////////////////////////////////////////////////////////////////////////////////
 // Array - mimics std::vector, except the array contents are effectively 
-// heterogeneous thanks to the Element base class
+//  heterogeneous thanks to the Element base class. push_back has been replaced
+//  by more generic insert functions
 
 class ArrayImp;
 class Array : public Element_T<ArrayImp>
 {
 public:
-   typedef std::list<Element> Elements;
+   typedef std::vector<Element> Elements;
    typedef Elements::iterator iterator;
    typedef Elements::const_iterator const_iterator;
 
@@ -121,20 +125,23 @@ public:
 
    Element& operator [] (size_t index);
    const Element& operator [] (size_t index) const;
+
+   void Clear();
 };
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// Object - mimics std::map<std::string, Element>, except the array contents are 
-// effectively heterogeneous thanks to the Element base class
+// Object - mimics std::map<std::string, Element>, except the member value 
+//  contents are effectively heterogeneous thanks to the Element base class
 
 class ObjectImp;
 class Object : public Element_T<ObjectImp>
 {
 public:
    struct Member {
-      Member(const std::string& nameIn = std::string(), const Element& elementIn = Element()) :
-         name(nameIn), element(elementIn) {}
+      Member(const std::string& nameIn = std::string(), const Element& elementIn = Element());
+
+      bool operator == (const Member& member) const;
 
       std::string name;
       Element element;
@@ -176,8 +183,10 @@ template <typename DataTypeT, ElementType TYPE>
 class TrivialType_T : public Element_T<TrivialImpType_T<DataTypeT, TYPE> >
 {
 public:
+   typedef DataTypeT DataType;
+   typedef TrivialType_T<DataTypeT, TYPE> ThisType;
+
    TrivialType_T(const DataTypeT& t = DataTypeT());
-   TrivialType_T& operator = (const DataTypeT& t);
 
    operator const DataTypeT&() const;
    operator DataTypeT&();

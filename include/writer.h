@@ -16,7 +16,6 @@ TODO: additional documentation.
 namespace json
 {
 
-
 class Writer : private ConstVisitor
 {
 public:
