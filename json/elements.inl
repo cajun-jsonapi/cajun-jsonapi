@@ -1,10 +1,31 @@
-/**********************************************
+/******************************************************************************
 
-License: BSD
-Project Webpage: http://cajun-jsonapi.sourceforge.net/
-Author: Terry Caton
+Copyright (c) 2009-2010, Terry Caton
+All rights reserved.
 
-***********************************************/
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright 
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the projecct nor the names of its contributors 
+      may be used to endorse or promote products derived from this software 
+      without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+******************************************************************************/
 
 #include "visitor.h"
 #include "reader.h"
@@ -135,8 +156,17 @@ inline UnknownElement::operator Null& ()      { return ConvertTo<Null>(); }
 
 inline UnknownElement& UnknownElement::operator = (const UnknownElement& unknown) 
 {
-   delete m_pImp;
-   m_pImp = unknown.m_pImp->Clone();
+   // always check for this
+   if (&unknown != this)
+   {
+      // we might be copying from a subtree of ourselves. delete the old imp
+      //  only after the clone operation is complete. yes, this could be made 
+      //  more efficient, but isn't worth the complexity
+      Imp* pOldImp = m_pImp;
+      m_pImp = unknown.m_pImp->Clone();
+      delete pOldImp;
+   }
+
    return *this;
 }
 
@@ -262,7 +292,7 @@ inline Object::iterator Object::Insert(const Member& member, iterator itWhere)
 {
    iterator it = Find(member.name);
    if (it != m_Members.end())
-      throw Exception("Object member already exists: " + member.name);
+      throw Exception(std::string("Object member already exists: ") + member.name);
 
    it = m_Members.insert(itWhere, member);
    return it;
@@ -289,7 +319,7 @@ inline const UnknownElement& Object::operator [](const std::string& name) const
 {
    const_iterator it = Find(name);
    if (it == End())
-      throw Exception("Object member not found: " + name);
+      throw Exception(std::string("Object member not found: ") + name);
    return it->element;
 }
 

@@ -1,6 +1,13 @@
+2.0.2 (12/04/2011)
+* Fixed exception text construction bug (pointer + offset, instead of std::string + std::string)
+* Fixed crash in UnknownElement::operator=
+* Fixed bug where object member names couldn't contain special characters
+* Fixed crash when parsing an incomplete document
+* Cosmetic changes to parser
+* Added proper BSD license text
+
 2.0.1 (11/17/2009)
 * A couple of Reader functions not inlined, sometimes resulting in linker duplicate symbols. Oops.
-
 
 2.0.0 (11/14/2009)
 * Redesign/simplicification of the element class relationships:
