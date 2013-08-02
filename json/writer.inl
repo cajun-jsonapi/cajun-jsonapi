@@ -35,7 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TODO:
 * better documentation
-* unicode character encoding
 
 */
 
@@ -122,7 +121,7 @@ inline void Writer::Write_i(const Object& object)
 
 inline void Writer::Write_i(const Number& numberElement)
 {
-   m_ostr << std::setprecision(20) << numberElement.Value();
+   m_ostr << std::dec << std::setprecision(20) << numberElement.Value();
 }
 
 inline void Writer::Write_i(const Boolean& booleanElement)
@@ -139,6 +138,48 @@ inline void Writer::Write_i(const String& stringElement)
                                itEnd(s.end());
    for (; it != itEnd; ++it)
    {
+      // check for UTF-8 unicode encoding
+      unsigned char u = static_cast<unsigned char>(*it);
+      if (u & 0xc0) {
+         if ((u & 0xe0) == 0xc0) {
+            // two-character sequence
+            int x = (*it & 0x1f) << 6;
+            if ((it + 1) == itEnd) {
+               m_ostr << *it; continue;
+            }
+            u = static_cast<unsigned char>(*(it + 1));
+            if ((u & 0xc0) == 0x80) {
+               x |= u & 0x3f;
+               m_ostr << "\\u" << std::hex << std::setfill('0')
+                  << std::setw(4) << x;
+               ++it;
+               continue;
+            }
+
+         } else if ((u & 0xf0) == 0xe0) {
+            // three-character sequence
+            int x = (u & 0x0f) << 12;
+            if ((it + 1) == itEnd) {
+               m_ostr << *it; continue;
+            }
+            u = static_cast<unsigned char>(*(it + 1));
+            if ((u & 0xc0) == 0x80) {
+               x |= (u & 0x3f) << 6;
+               if ((it + 2) == itEnd) {
+                  m_ostr << *it; continue;
+               }
+               u = static_cast<unsigned char>(*(it + 2));
+               if ((u & 0xc0) == 0x80) {
+                  x |= u & 0x3f;
+                  m_ostr << "\\u" << std::hex << std::setfill('0')
+                     << std::setw(4) << x;
+                  it = it + 2;
+                  continue;
+               }
+            }
+         }
+      }
+
       switch (*it)
       {
          case '"':         m_ostr << "\\\"";   break;
@@ -148,7 +189,6 @@ inline void Writer::Write_i(const String& stringElement)
          case '\n':        m_ostr << "\\n";    break;
          case '\r':        m_ostr << "\\r";    break;
          case '\t':        m_ostr << "\\t";    break;
-         case '\u':        m_ostr << "\\u";    break; // uh...
          default:          m_ostr << *it;      break;
       }
    }

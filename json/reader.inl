@@ -35,7 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TODO:
 * better documentation
-* unicode character decoding
 
 */
 
@@ -308,7 +307,7 @@ inline std::string Reader::MatchString(InputStream& inputStream)
 
       // escape?
       if (c == '\\' &&
-          inputStream.EOS() == false) // shouldn't have reached the end yet
+         inputStream.EOS() == false) // shouldn't have reached the end yet
       {
          c = inputStream.Get();
          switch (c) {
@@ -320,7 +319,37 @@ inline std::string Reader::MatchString(InputStream& inputStream)
             case 'n':      string.push_back('\n');    break;
             case 'r':      string.push_back('\r');    break;
             case 't':      string.push_back('\t');    break;
-            case 'u':      string.push_back('\u');    break; // TODO: what do we do with this?
+            case 'u': { // convert unicode to UTF-8
+               int x = 0, i;
+
+               // next four characters should be hex
+               for (i = 0; i < 4; ++i) {
+                  c = inputStream.Get();
+                  if (c >= '0' && c <= '9') {
+                      x = (x << 4) | (c - '0');
+                  } else if (c >= 'a' && c <= 'f') {
+                      x = (x << 4) | (c - 'a' + 10);
+                  } else if (c >= 'A' && c <= 'F') {
+                      x = (x << 4) | (c - 'A' + 10);
+                  } else {
+                     std::string sMessage = std::string("Unrecognized hexadecimal character found in string: ") + c;
+                     throw ScanException(sMessage, inputStream.GetLocation());
+                  }
+               }
+
+               // encode as UTF-8
+               if (x < 0x80) {
+                   string.push_back(x);
+               } else if (x < 0x800) {
+                   string.push_back(0xc0 | (x >> 6));
+                   string.push_back(0x80 | (x & 0x3f));
+               } else {
+                   string.push_back(0xe0 | (x >> 12));
+                   string.push_back(0x80 | ((x >> 6) & 0x3f));
+                   string.push_back(0x80 | (x & 0x3f));
+               }
+               break;
+            }
             default: {
                std::string sMessage = std::string("Unrecognized escape sequence found in string: \\") + c;
                throw ScanException(sMessage, inputStream.GetLocation());
