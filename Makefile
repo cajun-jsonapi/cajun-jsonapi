@@ -4,4 +4,4 @@ $(EXE_NAME): test.cpp
 	g++ -o $@ $^
 
 clean:
-	rm $(EXE_NAME)
+	-rm $(EXE_NAME)
