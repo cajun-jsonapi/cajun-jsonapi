@@ -27,9 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************/
 
-#include "json/reader.h"
-#include "json/writer.h"
-#include "json/elements.h"
+#include "cajun/json/reader.h"
+#include "cajun/json/writer.h"
+#include "cajun/json/elements.h"
 
 #include <sstream>
 
