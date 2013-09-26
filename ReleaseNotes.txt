@@ -1,3 +1,6 @@
+2.0.4 (unreleased)
+* tweak directory layout to make it easier to use in other projects
+
 2.0.3 (2013-09-26)
 * fix for UTF-8 support on Linux builds
 * add spec file for RPM packaging
