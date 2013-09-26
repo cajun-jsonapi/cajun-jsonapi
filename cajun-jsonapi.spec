@@ -6,7 +6,7 @@ Name: cajun-jsonapi
 Version: 2.0.3
 Release: 1%{?dist}
 URL: https://github.com/cajun-jsonapi/cajun-jsonapi
-Source0: https://github.com/cajun-jsonapi/cajun-jsonapi/archive/cajun-jsonapi-%{version}.tar.gz
+Source0: https://github.com/cajun-jsonapi/cajun-jsonapi/archive/%{version}.tar.gz
 License: BSD
 Group: System Environment/Libraries
 
