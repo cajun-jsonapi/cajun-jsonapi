@@ -1,5 +1,5 @@
 # cajun only ships headers, so no debuginfo package is needed
-%define debug_package %{nil}
+BuildArch:      noarch
 
 Summary: A cross-platform C++ header library for JSON
 Name: cajun-jsonapi
@@ -41,7 +41,6 @@ install -p -m644 json/* $RPM_BUILD_ROOT/%{_includedir}/cajun/json
 make %{?_smp_mflags}
 
 %files devel
-%defattr(-,root,root,-)
 %doc Readme.txt ReleaseNotes.txt
 %dir %{_includedir}/cajun
 %dir %{_includedir}/cajun/json
