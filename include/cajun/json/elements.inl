@@ -5,23 +5,23 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright 
+    * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the projecct nor the names of its contributors 
-      may be used to endorse or promote products derived from this software 
+    * Neither the name of the projecct nor the names of its contributors
+      may be used to endorse or promote products derived from this software
       without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <map>
 
-/*  
+/*
 
 TODO:
 * better documentation
@@ -154,13 +154,13 @@ inline UnknownElement::operator Boolean& ()   { return ConvertTo<Boolean>(); }
 inline UnknownElement::operator String& ()    { return ConvertTo<String>(); }
 inline UnknownElement::operator Null& ()      { return ConvertTo<Null>(); }
 
-inline UnknownElement& UnknownElement::operator = (const UnknownElement& unknown) 
+inline UnknownElement& UnknownElement::operator = (const UnknownElement& unknown)
 {
    // always check for this
    if (&unknown != this)
    {
       // we might be copying from a subtree of ourselves. delete the old imp
-      //  only after the clone operation is complete. yes, this could be made 
+      //  only after the clone operation is complete. yes, this could be made
       //  more efficient, but isn't worth the complexity
       Imp* pOldImp = m_pImp;
       m_pImp = unknown.m_pImp->Clone();
@@ -212,7 +212,7 @@ const ElementTypeT& UnknownElement::CastTo() const
 
 
 template <typename ElementTypeT>
-ElementTypeT& UnknownElement::ConvertTo() 
+ElementTypeT& UnknownElement::ConvertTo()
 {
    CastVisitor_T<ElementTypeT> castVisitor;
    m_pImp->Accept(castVisitor);
@@ -245,7 +245,7 @@ inline bool UnknownElement::operator == (const UnknownElement& element) const
 inline Object::Member::Member(const std::string& nameIn, const UnknownElement& elementIn) :
    name(nameIn), element(elementIn) {}
 
-inline bool Object::Member::operator == (const Member& member) const 
+inline bool Object::Member::operator == (const Member& member) const
 {
    return name == member.name &&
           element == member.element;
@@ -270,15 +270,20 @@ inline Object::iterator Object::End() { return m_Members.end(); }
 inline Object::const_iterator Object::Begin() const { return m_Members.begin(); }
 inline Object::const_iterator Object::End() const { return m_Members.end(); }
 
+inline Object::iterator Object::begin() { return Begin(); }
+inline Object::iterator Object::end() { return End(); }
+inline Object::const_iterator Object::begin() const { return Begin(); }
+inline Object::const_iterator Object::end() const { return End(); }
+
 inline size_t Object::Size() const { return m_Members.size(); }
 inline bool Object::Empty() const { return m_Members.empty(); }
 
-inline Object::iterator Object::Find(const std::string& name) 
+inline Object::iterator Object::Find(const std::string& name)
 {
    return std::find_if(m_Members.begin(), m_Members.end(), Finder(name));
 }
 
-inline Object::const_iterator Object::Find(const std::string& name) const 
+inline Object::const_iterator Object::Find(const std::string& name) const
 {
    return std::find_if(m_Members.begin(), m_Members.end(), Finder(name));
 }
@@ -298,7 +303,7 @@ inline Object::iterator Object::Insert(const Member& member, iterator itWhere)
    return it;
 }
 
-inline Object::iterator Object::Erase(iterator itWhere) 
+inline Object::iterator Object::Erase(iterator itWhere)
 {
    return m_Members.erase(itWhere);
 }
@@ -312,10 +317,10 @@ inline UnknownElement& Object::operator [](const std::string& name)
       Member member(name);
       it = Insert(member, End());
    }
-   return it->element;      
+   return it->element;
 }
 
-inline const UnknownElement& Object::operator [](const std::string& name) const 
+inline const UnknownElement& Object::operator [](const std::string& name) const
 {
    const_iterator it = Find(name);
    if (it == End())
@@ -323,12 +328,12 @@ inline const UnknownElement& Object::operator [](const std::string& name) const
    return it->element;
 }
 
-inline void Object::Clear() 
+inline void Object::Clear()
 {
-   m_Members.clear(); 
+   m_Members.clear();
 }
 
-inline bool Object::operator == (const Object& object) const 
+inline bool Object::operator == (const Object& object) const
 {
    return m_Members == object.m_Members;
 }
@@ -342,8 +347,13 @@ inline Array::iterator Array::End()    { return m_Elements.end(); }
 inline Array::const_iterator Array::Begin() const  { return m_Elements.begin(); }
 inline Array::const_iterator Array::End() const    { return m_Elements.end(); }
 
+inline Array::iterator Array::begin() { return Begin(); }
+inline Array::iterator Array::end() { return End(); }
+inline Array::const_iterator Array::begin() const { return Begin(); }
+inline Array::const_iterator Array::end() const { return End(); }
+
 inline Array::iterator Array::Insert(const UnknownElement& element, iterator itWhere)
-{ 
+{
    return m_Elements.insert(itWhere, element);
 }
 
@@ -353,7 +363,7 @@ inline Array::iterator Array::Insert(const UnknownElement& element)
 }
 
 inline Array::iterator Array::Erase(iterator itWhere)
-{ 
+{
    return m_Elements.erase(itWhere);
 }
 
@@ -370,14 +380,14 @@ inline UnknownElement& Array::operator[] (size_t index)
    size_t nMinSize = index + 1; // zero indexed
    if (m_Elements.size() < nMinSize)
       m_Elements.resize(nMinSize);
-   return m_Elements[index]; 
+   return m_Elements[index];
 }
 
-inline const UnknownElement& Array::operator[] (size_t index) const 
+inline const UnknownElement& Array::operator[] (size_t index) const
 {
    if (index >= m_Elements.size())
       throw Exception("Array out of bounds");
-   return m_Elements[index]; 
+   return m_Elements[index];
 }
 
 inline void Array::Clear() {
@@ -400,25 +410,25 @@ TrivialType_T<DataTypeT>::TrivialType_T(const DataTypeT& t) :
 template <typename DataTypeT>
 TrivialType_T<DataTypeT>::operator DataTypeT&()
 {
-   return Value(); 
+   return Value();
 }
 
 template <typename DataTypeT>
 TrivialType_T<DataTypeT>::operator const DataTypeT&() const
 {
-   return Value(); 
+   return Value();
 }
 
 template <typename DataTypeT>
 DataTypeT& TrivialType_T<DataTypeT>::Value()
 {
-   return m_tValue; 
+   return m_tValue;
 }
 
 template <typename DataTypeT>
 const DataTypeT& TrivialType_T<DataTypeT>::Value() const
 {
-   return m_tValue; 
+   return m_tValue;
 }
 
 template <typename DataTypeT>
