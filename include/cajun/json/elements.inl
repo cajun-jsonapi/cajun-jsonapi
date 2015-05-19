@@ -270,6 +270,11 @@ inline Object::iterator Object::End() { return m_Members.end(); }
 inline Object::const_iterator Object::Begin() const { return m_Members.begin(); }
 inline Object::const_iterator Object::End() const { return m_Members.end(); }
 
+inline Object::iterator Object::begin() { return Begin(); }
+inline Object::iterator Object::end() { return End(); }
+inline Object::const_iterator Object::begin() const { return Begin(); }
+inline Object::const_iterator Object::end() const { return End(); }
+
 inline size_t Object::Size() const { return m_Members.size(); }
 inline bool Object::Empty() const { return m_Members.empty(); }
 
@@ -341,6 +346,11 @@ inline Array::iterator Array::Begin()  { return m_Elements.begin(); }
 inline Array::iterator Array::End()    { return m_Elements.end(); }
 inline Array::const_iterator Array::Begin() const  { return m_Elements.begin(); }
 inline Array::const_iterator Array::End() const    { return m_Elements.end(); }
+
+inline Array::iterator Array::begin() { return Begin(); }
+inline Array::iterator Array::end() { return End(); }
+inline Array::const_iterator Array::begin() const { return Begin(); }
+inline Array::const_iterator Array::end() const { return End(); }
 
 inline Array::iterator Array::Insert(const UnknownElement& element, iterator itWhere)
 { 
