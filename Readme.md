@@ -11,6 +11,7 @@ Too many JSON parsers I've seen suffer from overly complex designs and confusing
 As with any design, sacrifices were made with CAJUN. Most situations I've encountered where JSON is well-suited (reading & writing application configuration and data files) are not typically performance bottlenecks, so simplicity, safety & flexibility were favored over raw speed. The end result is a library with simple, typesafe classes, no memory-management burden on the user, and exception-based error reporting.
 
 \* C++ API for JSON. A pint on me for who ever comes up with a good meaning for "UN".
+
 \*\* To be fair, XML doesn't suck intentionally, it is just often used inappropriately.
 
-[![CircleCI](https://circleci.com/gh/teeks99/cajun-jsonapi.svg?style=svg)](https://circleci.com/gh/teeks99/cajun-jsonapi)
+CircleCI Build Status: [![CircleCI](https://circleci.com/gh/teeks99/cajun-jsonapi.svg?style=svg)](https://circleci.com/gh/teeks99/cajun-jsonapi)
