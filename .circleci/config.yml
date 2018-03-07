@@ -1,0 +1,19 @@
+version: 2.0
+
+jobs:
+  build: 
+    docker:
+      - image: ubuntu:xenial
+
+    steps:
+      - checkout
+      - run:
+        command: |
+          curl -L -o boost_1_64_0.tar.bz2 https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2
+          tar -jxf boost_1_64_0.tar.bz2
+          ln -s ../boost_1_64_0 cajun-jsonapi/boost_1_64_0
+
+      - run:
+        command:
+          make test
+
