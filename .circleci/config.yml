@@ -8,7 +8,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          apt update && apt install curl git build-essential
+          apt update && apt install -y curl git build-essential
           curl -L -o boost_1_64_0.tar.bz2 https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2
           tar -jxf boost_1_64_0.tar.bz2
           ln -s ../boost_1_64_0 cajun-jsonapi/boost_1_64_0
