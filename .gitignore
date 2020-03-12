@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/cajun-jsonapi/v16
+/.vs
+/test_project/.vs/test_project/v16
+/test_project/Debug
+/test_project/test_project.vcxproj.user
+/test_project/test_project.vcxproj.filters
