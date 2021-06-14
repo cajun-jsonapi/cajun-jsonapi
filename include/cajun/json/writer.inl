@@ -43,23 +43,24 @@ namespace json
 
 
 inline void Writer::Write(const UnknownElement& elementRoot, std::ostream& ostr) { Write_i(elementRoot, ostr); }
-inline void Writer::Write(const Object& object, std::ostream& ostr)              { Write_i(object, ostr); }
-inline void Writer::Write(const Array& array, std::ostream& ostr)                { Write_i(array, ostr); }
+inline void Writer::Write(const Object& object, std::ostream& ostr, bool pretty) { Write_i(object, ostr, pretty); }
+inline void Writer::Write(const Array& array, std::ostream& ostr, bool pretty)   { Write_i(array, ostr, pretty); }
 inline void Writer::Write(const Number& number, std::ostream& ostr)              { Write_i(number, ostr); }
 inline void Writer::Write(const String& string, std::ostream& ostr)              { Write_i(string, ostr); }
 inline void Writer::Write(const Boolean& boolean, std::ostream& ostr)            { Write_i(boolean, ostr); }
 inline void Writer::Write(const Null& null, std::ostream& ostr)                  { Write_i(null, ostr); }
 
 
-inline Writer::Writer(std::ostream& ostr) :
+inline Writer::Writer(std::ostream& ostr, bool pretty) :
    m_ostr(ostr),
+   m_pretty(pretty),
    m_nTabDepth(0)
 {}
 
 template <typename ElementTypeT>
-void Writer::Write_i(const ElementTypeT& element, std::ostream& ostr)
+void Writer::Write_i(const ElementTypeT& element, std::ostream& ostr, bool pretty)
 {
-   Writer writer(ostr);
+   Writer writer(ostr, pretty);
    writer.Write_i(element);
    ostr.flush(); // all done
 }
@@ -70,23 +71,25 @@ inline void Writer::Write_i(const Array& array)
       m_ostr << "[]";
    else
    {
-      m_ostr << '[' << std::endl;
+      m_ostr << '[';
+      if(m_pretty) m_ostr << std::endl;
       ++m_nTabDepth;
 
       Array::const_iterator it(array.Begin()),
                             itEnd(array.End());
       while (it != itEnd) {
-         m_ostr << std::string(m_nTabDepth, '\t');
+         if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
          
          Write_i(*it);
 
          if (++it != itEnd)
             m_ostr << ',';
-         m_ostr << std::endl;
+         if(m_pretty) m_ostr << std::endl;
       }
 
       --m_nTabDepth;
-      m_ostr << std::string(m_nTabDepth, '\t') << ']';
+      if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
+      m_ostr << ']';
    }
 }
 
@@ -96,13 +99,14 @@ inline void Writer::Write_i(const Object& object)
       m_ostr << "{}";
    else
    {
-      m_ostr << '{' << std::endl;
+      m_ostr << '{';
+      if(m_pretty) m_ostr << std::endl;
       ++m_nTabDepth;
 
       Object::const_iterator it(object.Begin()),
                              itEnd(object.End());
       while (it != itEnd) {
-         m_ostr << std::string(m_nTabDepth, '\t');
+         if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
          
          Write_i(it->name);
 
@@ -111,11 +115,12 @@ inline void Writer::Write_i(const Object& object)
 
          if (++it != itEnd)
             m_ostr << ',';
-         m_ostr << std::endl;
+         if(m_pretty) m_ostr << std::endl;
       }
 
       --m_nTabDepth;
-      m_ostr << std::string(m_nTabDepth, '\t') << '}';
+      if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
+      m_ostr << '}';
    }
 }
 
