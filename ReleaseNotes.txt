@@ -1,5 +1,8 @@
-2.0.4 (unreleased)
+2.1.0 (2021-06-14)
 * tweak directory layout to make it easier to use in other projects
+* Writer: Make output formatting optional
+* Reader: Add support for Unicode and Unicode surrogate pairs
+* add unit tests
 
 2.0.3 (2013-09-26)
 * fix for UTF-8 support on Linux builds
