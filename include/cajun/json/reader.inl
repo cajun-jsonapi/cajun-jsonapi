@@ -294,11 +294,17 @@ inline std::string Reader::MatchExpectedString(InputStream& inputStream, const s
    return sExpected;
 }
 
+#define IS_HIGH_SURROGATE(uc) (((uc) & 0xfc00) == 0xd800)
+#define IS_LOW_SURROGATE(uc)  (((uc) & 0xfc00) == 0xdc00)
+#define MISSING_LOW_SURROGATE(c) \
+   std::string sMessage = std::string("Missing unicode low surrogate in string: ") + c; \
+   throw ScanException(sMessage, inputStream.GetLocation());
 
 inline std::string Reader::MatchString(InputStream& inputStream)
 {
    MatchExpectedString(inputStream, "\"");
 
+   uint16_t unicodeMulti = 0;
    std::string string;
    while (inputStream.EOS() == false &&
           inputStream.Peek() != '"')
@@ -310,6 +316,9 @@ inline std::string Reader::MatchString(InputStream& inputStream)
          inputStream.EOS() == false) // shouldn't have reached the end yet
       {
          c = inputStream.Get();
+         if (unicodeMulti != 0 && c != 'u') {
+            MISSING_LOW_SURROGATE(c); // throws
+         }
          switch (c) {
             case '/':      string.push_back('/');     break;
             case '"':      string.push_back('"');     break;
@@ -337,10 +346,39 @@ inline std::string Reader::MatchString(InputStream& inputStream)
                   }
                }
 
-               // encode as UTF-8
+               // trivial case
                if (x < 0x80) {
-                   string.push_back(x);
-               } else if (x < 0x800) {
+                  string.push_back(x);
+                  break;
+               }
+
+               // encode surrogate pair
+               if (unicodeMulti) {
+                  if (!IS_LOW_SURROGATE(x)) {
+                     MISSING_LOW_SURROGATE(c); // throws
+                  }
+
+                  x = 0x10000 + ((unicodeMulti & 0x3ff) << 10) + (x & 0x3ff);
+                  string.push_back((char) ((x >> 18) | 0xf0));
+                  string.push_back((char) (((x >> 12) & 0x3f) | 0x80));
+                  string.push_back((char) (((x >> 6) & 0x3f) | 0x80));
+                  string.push_back((char) ((x & 0x3f) | 0x80));
+                  unicodeMulti = 0;
+                  break;
+               }
+
+               if (IS_HIGH_SURROGATE(x)) {
+                  unicodeMulti = x;
+                  break;
+               }
+
+               if (IS_LOW_SURROGATE(x)) {
+                  std::string sMessage = std::string("Unexpected unicode low surrogate found in string: ") + c;
+                  throw ScanException(sMessage, inputStream.GetLocation());
+               }
+
+               // encode as UTF-8
+               if (x < 0x800) {
                    string.push_back(0xc0 | (x >> 6));
                    string.push_back(0x80 | (x & 0x3f));
                } else {
@@ -357,6 +395,9 @@ inline std::string Reader::MatchString(InputStream& inputStream)
          }
       }
       else {
+         if (unicodeMulti != 0) {
+            MISSING_LOW_SURROGATE(c); // throws
+         }
          string.push_back(c);
       }
    }
