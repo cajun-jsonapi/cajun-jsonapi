@@ -38,8 +38,8 @@ namespace json
 class Writer : private ConstVisitor
 {
 public:
-   static void Write(const Object& object, std::ostream& ostr);
-   static void Write(const Array& array, std::ostream& ostr);
+   static void Write(const Object& object, std::ostream& ostr, bool pretty = false);
+   static void Write(const Array& array, std::ostream& ostr, bool pretty = true);
    static void Write(const String& string, std::ostream& ostr);
    static void Write(const Number& number, std::ostream& ostr);
    static void Write(const Boolean& boolean, std::ostream& ostr);
@@ -47,10 +47,10 @@ public:
    static void Write(const UnknownElement& elementRoot, std::ostream& ostr);
 
 private:
-   Writer(std::ostream& ostr);
+   Writer(std::ostream& ostr, bool pretty = true);
 
    template <typename ElementTypeT>
-   static void Write_i(const ElementTypeT& element, std::ostream& ostr);
+   static void Write_i(const ElementTypeT& element, std::ostream& ostr, bool pretty = true);
 
    void Write_i(const Object& object);
    void Write_i(const Array& array);
@@ -68,6 +68,7 @@ private:
    virtual void Visit(const Null& null);
 
    std::ostream& m_ostr;
+   bool m_pretty;
    int m_nTabDepth;
 };
 

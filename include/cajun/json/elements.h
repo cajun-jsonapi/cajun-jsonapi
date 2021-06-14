@@ -188,6 +188,11 @@ public:
    iterator End();
    const_iterator Begin() const;
    const_iterator End() const;
+
+   iterator begin();
+   iterator end();
+   const_iterator begin() const;
+   const_iterator end() const;
    
    iterator Insert(const UnknownElement& element, iterator itWhere);
    iterator Insert(const UnknownElement& element);
@@ -234,6 +239,11 @@ public:
    iterator End();
    const_iterator Begin() const;
    const_iterator End() const;
+
+   iterator begin();
+   iterator end();
+   const_iterator begin() const;
+   const_iterator end() const;
 
    size_t Size() const;
    bool Empty() const;
