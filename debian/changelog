@@ -1,3 +1,9 @@
+cajun (2.1.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Daniel Pocock <daniel@pocock.pro>  Mon, 14 Jun 2021 00:11:02 +0200
+
 cajun (2.0.3-3) unstable; urgency=medium
 
   * d/copyright: Use https protocol in Format field
