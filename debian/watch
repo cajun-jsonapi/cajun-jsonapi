@@ -1,0 +1,3 @@
+version=3
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/cajun-jsonapi-$1.tar.gz/ \
+  https://github.com/cajun-jsonapi/cajun-jsonapi/tags .*/v?(\d\S*)\.tar\.gz
