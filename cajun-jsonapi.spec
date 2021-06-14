@@ -1,6 +1,6 @@
 
 Name:           cajun-jsonapi
-Version:        2.0.3
+Version:        2.1.0
 Release:        1%{?dist}
 Summary:        A cross-platform C++ header library for JSON
 License:        BSD-3-Clause
@@ -50,5 +50,8 @@ rm -rf %{buildroot}
 %{_includedir}/cajun/
 
 %changelog
-* Thu Sep 26 2013 Daniel Pocock <daniel@pocock.com.au> - 2.0.3-1
+* Mon Jun 14 2021 Daniel Pocock <daniel@pocock.pro> - 2.1.0-1
+- Updated for next release
+
+* Thu Sep 26 2013 Daniel Pocock <daniel@pocock.pro> - 2.0.3-1
 - Initial spec file
