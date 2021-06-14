@@ -6,8 +6,8 @@ Uploaders: Daniel Pocock <daniel@pocock.pro>
 Homepage: https://github.com/cajun-jsonapi/cajun-jsonapi
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.5
-Vcs-Git: https://salsa.debian.org/debian/cajun.git
-Vcs-Browser: https://salsa.debian.org/debian/cajun
+Vcs-Git: https://github.com/cajun-jsonapi/cajun-jsonapi
+Vcs-Browser: https://github.com/cajun-jsonapi/cajun-jsonapi
 
 Package: libcajun-dev
 Section: libdevel
