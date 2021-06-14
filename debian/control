@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.debian.org>
 Uploaders: Daniel Pocock <daniel@pocock.pro>
 Homepage: https://github.com/cajun-jsonapi/cajun-jsonapi
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9),
+               libboost-dev
 Standards-Version: 3.9.5
 Vcs-Git: https://github.com/cajun-jsonapi/cajun-jsonapi
 Vcs-Browser: https://github.com/cajun-jsonapi/cajun-jsonapi
