@@ -110,7 +110,7 @@ inline void Writer::Write_i(const Object& object)
          
          Write_i(it->name);
 
-         m_ostr << " : ";
+         m_ostr << (m_pretty ? " : " : ":");
          Write_i(it->element); 
 
          if (++it != itEnd)

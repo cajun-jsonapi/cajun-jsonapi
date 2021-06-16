@@ -1,8 +1,14 @@
-cajun (2.1.0-1~bpo10+1) buster-backports; urgency=medium
+cajun (2.1.1-1~bpo10+1) buster-backports; urgency=medium
 
   * Build for buster-backports.
 
- -- Daniel Pocock <daniel@pocock.pro>  Mon, 14 Jun 2021 00:36:41 +0200
+ -- Daniel Pocock <daniel@pocock.pro>  Wed, 16 Jun 2021 22:53:16 +0200
+
+cajun (2.1.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Daniel Pocock <daniel@pocock.pro>  Wed, 16 Jun 2021 22:53:16 +0200
 
 cajun (2.1.0-1) unstable; urgency=medium
 
