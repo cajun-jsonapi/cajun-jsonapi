@@ -35,7 +35,7 @@ and design.
 
 %install
 install -d -m755 $RPM_BUILD_ROOT/%{_includedir}/cajun/json
-install -p -m644 json/* $RPM_BUILD_ROOT/%{_includedir}/cajun/json
+install -p -m644 include/cajun/json/* $RPM_BUILD_ROOT/%{_includedir}/cajun/json
 
 %check
 make %{?_smp_mflags}
