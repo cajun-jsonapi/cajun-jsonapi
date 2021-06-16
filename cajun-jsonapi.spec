@@ -41,7 +41,7 @@ install -p -m644 include/cajun/json/* $RPM_BUILD_ROOT/%{_includedir}/cajun/json
 make %{?_smp_mflags}
 
 %files devel
-%doc Readme.txt ReleaseNotes.txt
+%doc Readme.md ReleaseNotes.txt
 %dir %{_includedir}/cajun
 %dir %{_includedir}/cajun/json
 %{_includedir}/cajun/json/*
