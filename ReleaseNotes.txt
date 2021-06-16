@@ -1,3 +1,7 @@
+2.1.1 (2021-06-16)
+* Writer: Make output formatting optional, remove more whitespace
+* rpm: sync spec file with Fedora 34
+
 2.1.0 (2021-06-14)
 * tweak directory layout to make it easier to use in other projects
 * Writer: Make output formatting optional
