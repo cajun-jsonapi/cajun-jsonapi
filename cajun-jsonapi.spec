@@ -3,7 +3,7 @@ BuildArch:      noarch
 
 Summary: A cross-platform C++ header library for JSON
 Name: cajun-jsonapi
-Version: 2.1.0
+Version: 2.1.1
 Release: 14%{?dist}
 URL: https://github.com/cajun-jsonapi/cajun-jsonapi
 Source0: https://github.com/cajun-jsonapi/cajun-jsonapi/archive/%{version}.tar.gz
@@ -47,6 +47,9 @@ make %{?_smp_mflags}
 %{_includedir}/cajun/json/*
 
 %changelog
+* Wed Jun 16 2021 Daniel Pocock <daniel@pocock.pro> - 2.1.1-14
+- Updated for next release
+
 * Mon Jun 14 2021 Daniel Pocock <daniel@pocock.pro> - 2.1.0-14
 - Updated for next release
 
