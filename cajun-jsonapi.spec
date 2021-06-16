@@ -1,16 +1,16 @@
-
-Name:           cajun-jsonapi
-Version:        2.1.0
-Release:        1%{?dist}
-Summary:        A cross-platform C++ header library for JSON
-License:        BSD-3-Clause
-Group:          Development/Libraries/C and C++
-Url:            https://github.com/cajun-jsonapi/cajun-jsonapi
-Source0:        %{name}-%{version}.tar.gz
-BuildRequires:  gcc-c++
+# cajun only ships headers, so no debuginfo package is needed
 BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
+Summary: A cross-platform C++ header library for JSON
+Name: cajun-jsonapi
+Version: 2.1.0
+Release: 14%{?dist}
+URL: https://github.com/cajun-jsonapi/cajun-jsonapi
+Source0: https://github.com/cajun-jsonapi/cajun-jsonapi/archive/%{version}.tar.gz
+License: BSD
+
+BuildRequires:  gcc-c++
+BuildRequires: make
 %description
 CAJUN is a C++ API for the JSON data interchange format with an emphasis
 on an intuitive, concise interface. The library provides JSON types
@@ -18,8 +18,7 @@ and operations that mimic standard C++ as closely as possible in concept
 and design.
 
 %package devel
-Summary:        Header files for cajun
-Group:          Development/Libraries/C and C++
+Summary: Header files for cajun
 
 %description devel
 Header files you can use to develop applications with cajun.
@@ -35,22 +34,20 @@ and design.
 %build
 
 %install
-install -d -m755 %{buildroot}%{_includedir}/cajun/json
-install -p -m644 json/* %{buildroot}%{_includedir}/cajun/json
+install -d -m755 $RPM_BUILD_ROOT/%{_includedir}/cajun/json
+install -p -m644 json/* $RPM_BUILD_ROOT/%{_includedir}/cajun/json
 
 %check
 make %{?_smp_mflags}
 
-%clean
-rm -rf %{buildroot}
-
 %files devel
-%defattr(-, root, root)
 %doc Readme.txt ReleaseNotes.txt
-%{_includedir}/cajun/
+%dir %{_includedir}/cajun
+%dir %{_includedir}/cajun/json
+%{_includedir}/cajun/json/*
 
 %changelog
-* Mon Jun 14 2021 Daniel Pocock <daniel@pocock.pro> - 2.1.0-1
+* Mon Jun 14 2021 Daniel Pocock <daniel@pocock.pro> - 2.1.0-14
 - Updated for next release
 
 * Thu Sep 26 2013 Daniel Pocock <daniel@pocock.pro> - 2.0.3-1
