@@ -103,7 +103,7 @@ private:
          TOKEN_STRING,        //    "xxx"
          TOKEN_NUMBER,        //    [+/-]000.000[e[+/-]000]
          TOKEN_BOOLEAN,       //    true -or- false
-         TOKEN_NULL,          //    null
+         TOKEN_NULL           //    null
       };
 
       Type nType;
