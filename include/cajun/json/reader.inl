@@ -5,23 +5,23 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright 
+    * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the projecct nor the names of its contributors 
-      may be used to endorse or promote products derived from this software 
+    * Neither the name of the projecct nor the names of its contributors
+      may be used to endorse or promote products derived from this software
       without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <set>
 #include <sstream>
 
-/*  
+/*
 
 TODO:
 * better documentation
@@ -65,7 +65,7 @@ public:
    // protect access to the input stream, so we can keeep track of document/line offsets
    char Get(); // big, define outside
    char Peek() {
-      assert(m_iStr.eof() == false); // enforce reading of only valid stream data 
+      assert(m_iStr.eof() == false); // enforce reading of only valid stream data
       return m_iStr.peek();
    }
 
@@ -84,9 +84,9 @@ private:
 
 inline char Reader::InputStream::Get()
 {
-   assert(m_iStr.eof() == false); // enforce reading of only valid stream data 
+   assert(m_iStr.eof() == false); // enforce reading of only valid stream data
    char c = m_iStr.get();
-   
+
    ++m_Location.m_nDocOffset;
    if (c == '\n') {
       ++m_Location.m_nLine;
@@ -132,7 +132,7 @@ inline const Reader::Token& Reader::TokenStream::Peek() {
       std::string sMessage = "Unexpected end of token stream";
       throw ParseException(sMessage, lastToken.locBegin, lastToken.locEnd); // nowhere to point to
    }
-   return *(m_itCurrent); 
+   return *(m_itCurrent);
 }
 
 inline const Reader::Token& Reader::TokenStream::Get() {
@@ -142,7 +142,7 @@ inline const Reader::Token& Reader::TokenStream::Get() {
 }
 
 inline bool Reader::TokenStream::EOS() const {
-   return m_itCurrent == m_Tokens.end(); 
+   return m_itCurrent == m_Tokens.end();
 }
 
 ///////////////////
@@ -158,7 +158,7 @@ inline void Reader::Read(Null& null, std::istream& istr)                    { Re
 inline void Reader::Read(UnknownElement& unknown, std::istream& istr)       { Read_i(unknown, istr); }
 
 
-template <typename ElementTypeT>   
+template <typename ElementTypeT>
 void Reader::Read_i(ElementTypeT& element, std::istream& istr)
 {
    Reader reader;
@@ -272,7 +272,7 @@ inline void Reader::Scan(Tokens& tokens, InputStream& inputStream)
 
 inline void Reader::EatWhiteSpace(InputStream& inputStream)
 {
-   while (inputStream.EOS() == false && 
+   while (inputStream.EOS() == false &&
           ::isspace(inputStream.Peek()))
       inputStream.Get();
 }
@@ -420,14 +420,14 @@ inline std::string Reader::MatchNumber(InputStream& inputStream)
    while (inputStream.EOS() == false &&
           numericChars.find(inputStream.Peek()) != numericChars.end())
    {
-      sNumber.push_back(inputStream.Get());   
+      sNumber.push_back(inputStream.Get());
    }
 
    return sNumber;
 }
 
 
-inline void Reader::Parse(UnknownElement& element, Reader::TokenStream& tokenStream) 
+inline void Reader::Parse(UnknownElement& element, Reader::TokenStream& tokenStream)
 {
    const Token& token = tokenStream.Peek();
    switch (token.nType) {
@@ -511,7 +511,7 @@ inline void Reader::Parse(Object& object, Reader::TokenStream& tokenStream)
       catch (Exception&)
       {
          // must be a duplicate name
-         std::string sMessage = std::string("Duplicate object member token: ") + member.name; 
+         std::string sMessage = std::string("Duplicate object member token: ") + member.name;
          throw ParseException(sMessage, tokenName.locBegin, tokenName.locEnd);
       }
 
