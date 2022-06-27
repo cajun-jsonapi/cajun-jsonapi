@@ -5,23 +5,23 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright 
+    * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the projecct nor the names of its contributors 
-      may be used to endorse or promote products derived from this software 
+    * Neither the name of the projecct nor the names of its contributors
+      may be used to endorse or promote products derived from this software
       without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <iomanip>
 
-/*  
+/*
 
 TODO:
 * better documentation
@@ -79,7 +79,7 @@ inline void Writer::Write_i(const Array& array)
                             itEnd(array.End());
       while (it != itEnd) {
          if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
-         
+
          Write_i(*it);
 
          if (++it != itEnd)
@@ -107,11 +107,11 @@ inline void Writer::Write_i(const Object& object)
                              itEnd(object.End());
       while (it != itEnd) {
          if(m_pretty) m_ostr << std::string(m_nTabDepth, '\t');
-         
+
          Write_i(it->name);
 
          m_ostr << (m_pretty ? " : " : ":");
-         Write_i(it->element); 
+         Write_i(it->element);
 
          if (++it != itEnd)
             m_ostr << ',';
@@ -198,7 +198,7 @@ inline void Writer::Write_i(const String& stringElement)
       }
    }
 
-   m_ostr << '"';   
+   m_ostr << '"';
 }
 
 inline void Writer::Write_i(const Null& )
@@ -208,7 +208,7 @@ inline void Writer::Write_i(const Null& )
 
 inline void Writer::Write_i(const UnknownElement& unknown)
 {
-   unknown.Accept(*this); 
+   unknown.Accept(*this);
 }
 
 inline void Writer::Visit(const Array& array)       { Write_i(array); }
